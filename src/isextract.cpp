@@ -1,5 +1,6 @@
 #include "isextract.h"
 #include "dostime.h"
+#include "cp932.h"
 
 #include <utime.h>
 #include <iostream>
@@ -130,9 +131,30 @@ void InstallShield::parseFiles()
     
     //read in file name, ensure null termination;
     uint8_t buffer[namelen + 1];
+
     m_fh.read(reinterpret_cast<char*>(buffer), namelen);
     buffer[namelen] = '\0';
-    file.first = reinterpret_cast<char*>(buffer);
+
+	/* filename wrangling */
+	char *utf8 = (char *)malloc((namelen * 4) + 1);
+	if(!utf8)
+	{
+		fprintf(stderr, "out of memory\n");
+		exit(1);
+	}
+
+	if(cp932_to_utf8(buffer, namelen, &utf8) < 0) /* in case we fail, just fall back to the buffer */
+	{
+		printf("cp932 filename conversion failed, bailing, please open an issue ticket\n");
+		exit(1);
+	}
+	else
+	{
+		file.first = reinterpret_cast<char*>(utf8);
+		free(utf8);
+	}
+
+	/* end filename wrangling */
     
     //complete out file entry with the offset within the body.
     file.second.offset = m_datasize;

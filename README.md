@@ -1,4 +1,4 @@
-InstallShield Extract
+InstallShield Extract with Shift-JIS support
 =====
 
 Based on https://github.com/OpenRA/OpenRA/blob/bleed/OpenRA.Game/FileSystem/InstallShieldPackage.cs
@@ -7,6 +7,8 @@ Overview
 ========
 
 isextract is a command line tool to extract from *.z InstallShield v3 packages many old windows games were distributed in.
+
+supports extracting japanese installshield v3 archives with Shift-JIS filenames. no native windows support, use WSL or cygwin.
 
 Usage
 =====
